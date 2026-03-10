@@ -1,0 +1,8 @@
+class Satellite:
+    def __init__(self, name: str, tle_line1: str, tle_line2: str):
+        self.name = name
+        self.tle_line1 = tle_line1
+        self.tle_line2 = tle_line2
+
+    def get_skyfield_object(self):
+        """Visszaadja a Skyfield EarthSatellite objektumot."""
