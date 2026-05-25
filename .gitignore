@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Generated temporal/cache data
+temporal_cache/
+temporal_edges.csv
+*.csv
+
+# TLE/cache files
+sat_catalog_*.tle
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
