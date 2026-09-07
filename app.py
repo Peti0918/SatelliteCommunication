@@ -79,8 +79,12 @@ class App:
             if right:
                 return f"{left}-{right[-3:]}"
 
-        # Ha nincs jobb megoldás, az első 10 karaktert mutatjuk.
-        return full_name[:10]
+        # Ha szóköz van a névben (pl. "IRIDIUM 100"), csak a szám részt mutatjuk,
+        # mert a [:10] levágná az utolsó számjegyet.
+        parts = full_name.split()
+        if len(parts) == 2:
+            return parts[1]
+        return full_name[:12]
 
     def switch_view(self, name):
 
@@ -219,10 +223,10 @@ class App:
         for sat_name in sat_names:
             x, y = self.pos[sat_name]
             angle = np.arctan2(y, x)
-            label_r = 1.18
+            label_r = 1.25
             lx = label_r * np.cos(angle)
             ly = label_r * np.sin(angle)
-            ax.text(lx, ly, self._short_sat_label(sat_name), ha='center', va='center', fontsize=8)
+            ax.text(lx, ly, self._short_sat_label(sat_name), ha='center', va='center', fontsize=7)
 
         # A földi állomások felirata közvetlenül a pont alatt jelenik meg.
         for gs_name in gs_names:
@@ -232,21 +236,23 @@ class App:
 
         # A hálózati nézet legyen torzításmentes, tehát azonos skálát használjon x és y irányban.
         ax.set_aspect('equal', adjustable='box')
-        ax.set_xlim(-1.35, 1.35)
-        ax.set_ylim(-1.35, 1.35)
+        ax.set_xlim(-1.55, 1.55)
+        ax.set_ylim(-1.55, 1.55)
 
         # Ide gyűjtjük a pillanatnyilag kirajzolt élek vonalait,
         # hogy a következő frame előtt törölni tudjuk őket.
         edge_lines = []
 
-        # Információs szöveg a nézet tetején.
+        # Információs szöveg az axes felett, a gráf fölött.
         info_text = ax.text(
             0.5,
-            0.95,
+            1.0, #1.01
             "",
             fontsize=10,
             transform=ax.transAxes,
             ha='center',
+            va='bottom',
+            clip_on=False,
             bbox=dict(facecolor='white', alpha=0.9, edgecolor='gray')
         )
 
@@ -356,25 +362,28 @@ class App:
 
         plotted_lines = 0
         for i, sd in enumerate(self.satellites):
+            short_name = self._short_sat_label(sd.name)
             for gs_name, data in sd.station_data.items():
                 # Csak azokat a kapcsolatokat rajzoljuk, ahol ténylegesen volt pass.
                 if len(data['passes']) > 0:
                     ax.plot(
                         data['elevation_deg'],
                         color=colors[plotted_lines % len(colors)],
-                        label=f"{sd.name[:8]} - {gs_name}",
-                        alpha=0.7
+                        label=f"{short_name} - {gs_name}",
+                        alpha=0.7,
+                        linewidth=1.0,
                     )
                     plotted_lines += 1
 
         # Küszöbvonal a láthatósági / aktív kapcsolati határhoz.
-        ax.axhline(self.threshold, color='red', linestyle='--', label='Threshold')
-        ax.set_title("Elevation vs Time (Only Active Passes)")
+        ax.axhline(self.threshold, color='red', linestyle='--', linewidth=1.5, label='Threshold')
+        ax.set_title("Elevation vs Time (satellites with active passes)")
         ax.set_xlabel("Time step (min)")
         ax.set_ylabel("Elevation (deg)")
 
         if plotted_lines > 0:
-            ax.legend(loc='upper right', fontsize='x-small', ncol=2)
+            ncols = max(1, plotted_lines // 20 + 1)
+            ax.legend(loc='upper right', fontsize=6, ncol=ncols)
 
         back_ax = self.fig.add_axes([0.01, 0.01, 0.1, 0.05])
         back_btn = Button(back_ax, "Back")

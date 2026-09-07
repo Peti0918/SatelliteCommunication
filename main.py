@@ -23,7 +23,7 @@ SatelliteData = namedtuple('SatelliteData', [
 # =========================
 # A konkrét konfiguráció a simulation_config.py fájlban van.
 # Konstelláció, műholdszám, időablak, földi állomások és modellparaméterek
-# módosításakor ott kell átírni a SIMULATION_CONFIG mezőit.
+# módosítani akarunk valamit, akkor a Simulationconfigot kell átírni
 config = SIMULATION_CONFIG
 
 ground_stations = config.create_ground_stations()
@@ -237,7 +237,7 @@ def print_pass_report(satellites, ground_stations, link_model, dt):
 
 
 # Riport kiírása a konzolra
-#print_pass_report(satellites, ground_stations, link_model, dt)
+print_pass_report(satellites, ground_stations, link_model, dt)
 
 # időindexelt él-tábla betöltése cache-ből, vagy generálása, ha még nincs ilyen konfigurációhoz
 satellite_fingerprint = [

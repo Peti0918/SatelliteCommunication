@@ -25,10 +25,9 @@ class LinkModel:
         return (self.geometric_loss(distance_m) *
                 self.atmospheric_loss(elevation_rad))
     
+    
     def inter_satellite_efficiency(self, distance_m):
     # Műhold-műhold optikai link egyszerűsített hatásfoka.
     # Itt nincs légköri veszteség, csak geometriai veszteséggel közelítünk.
-        return self.geometric_loss(distance_m)
-    
-    def inter_satellite_efficiency(self, distance_m):
+
         return self.isl_geometric_gain / (distance_m ** 2)
